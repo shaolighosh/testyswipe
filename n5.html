@@ -1,0 +1,92 @@
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  
+    <style>
+        body, html {
+            margin: 0;
+            height: 100%;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #myVideo {
+            width: 100%;
+            height: 100vh; /* 100% of viewport height */
+            object-fit: cover; /* Maintain aspect ratio, covering the entire container */
+        }
+
+        #playPauseBtn {
+            position: absolute;
+            font-size: 3em;
+            color: #fff;
+            cursor: pointer;
+            display: none; /* Initially hide the button */
+        }
+    </style>
+</head>
+<body>
+
+<video id="myVideo" poster="path/to/poster-image.jpg">
+  Your browser does not support the video tag.
+</video>
+
+<div id="playPauseBtn" class="fas fa-play" ></div>
+<script>
+    const videoElement = document.getElementById('myVideo');
+    const playPauseBtn = document.getElementById('playPauseBtn');
+
+    playPauseBtn.addEventListener('click', togglePlayPause);
+
+    function togglePlayPause() {
+        if (videoElement.paused) {
+            videoElement.play();
+        } else {
+            videoElement.pause();
+        }
+    }
+
+    videoElement.addEventListener('play', () => {
+        playPauseBtn.style.display = 'none';
+    });
+
+    videoElement.addEventListener('pause', () => {
+        playPauseBtn.style.display = 'block';
+    });
+
+    // Show the button initially if the video starts paused
+    if (videoElement.paused) {
+        playPauseBtn.style.display = 'block';
+    }
+
+    // Get the value of the 'src' parameter from the URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const videoSrc = urlParams.get('src');
+
+    // Set the video source if 'src' parameter is provided
+    if (videoSrc) {
+        const sourceElement = document.createElement('source');
+        sourceElement.src = `/a/uploads/${videoSrc}`; // assuming uploads folder is at the root level
+        sourceElement.type = 'video/mp4';
+        videoElement.appendChild(sourceElement);
+    }
+
+    // Function to create poster dynamically
+    function createPoster(video) {
+        // Here you can set any time you want
+        video.currentTime = 0.7;
+        var canvas = document.createElement("canvas");
+        canvas.width = 350;
+        canvas.height = 200;
+        canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height);
+        return canvas.toDataURL("image/jpeg");
+    }
+
+    // Set poster attribute after the video source has been added
+    videoElement.setAttribute("poster", createPoster(videoElement));
+</script>
+</body>
+</html>
